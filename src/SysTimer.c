@@ -1,0 +1,125 @@
+/************************************************************************//**
+ *
+ * \file SysTimer.c
+ *
+ * \addtogroup SysTimer SysTimer
+ * \{
+ *
+ * \brief
+ *
+ * \note
+ *
+ * \author kjshepherd ()
+ * \date 2014-09-10
+ *
+ ****************************************************************************/
+
+/****************************************************************************
+ *                              INCLUDE FILES                               *
+ ****************************************************************************/
+#include "SysTimer.h"
+//#include "types.h"
+#ifndef LINUX
+#define LINUX
+#endif
+#include "CommonDefines.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <signal.h>
+#include <time.h>
+
+/****************************************************************************
+ *                      PRIVATE TYPES and DEFINITIONS                       *
+ ****************************************************************************/
+#define MILLI_TO_NANO 1000000
+
+#define CLOCKID CLOCK_REALTIME
+#define SIG SIGRTMIN
+
+/****************************************************************************
+ *                              PRIVATE DATA                                *
+ ****************************************************************************/
+SystemTimerDevice Timer;
+TimerInterrupt timerCallback = NULL;
+
+/****************************************************************************
+ *                             EXTERNAL DATA                                *
+ ****************************************************************************/
+
+/****************************************************************************
+ *                     PRIVATE FUNCTION DECLARATIONS                        *
+ ****************************************************************************/
+void set_timer(long time_ms);
+void register_callback(TimerInterrupt cb);
+
+/****************************************************************************
+ *                     EXPORTED FUNCTION DEFINITIONS                        *
+ ****************************************************************************/
+SystemTimerDevice * SystemTimer_Init(void)
+{
+    Timer.SetTimer = set_timer;
+    Timer.RegisterInterruptCallback = register_callback;
+    return &Timer;
+}
+
+/****************************************************************************
+ *                     PRIVATE FUNCTION DEFINITIONS                         *
+ ****************************************************************************/
+void set_timer(long time_ms)
+{
+    timer_t timerid;
+    struct sigevent sev;
+    struct itimerspec its;
+    long long freq_nanosecs;
+    sigset_t mask;
+    struct sigaction sa;
+
+    /* Establish handler for timer signal */
+    
+    sa.sa_flags = SA_SIGINFO;
+    sa.sa_sigaction = timerCallback; //give the signal handler our timer callback
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIG, &sa, NULL) == -1)
+	errExit("sigaction");
+    
+    /* Block timer signal temporarily */
+
+    sigemptyset(&mask);
+    sigaddset(&mask, SIG);
+    if (sigprocmask(SIG_SETMASK, &mask, NULL) == -1)
+	errExit("sigprocmask");
+
+    /* Create the timer */
+
+    sev.sigev_notify = SIGEV_SIGNAL;
+    sev.sigev_signo = SIG;
+    sev.sigev_value.sival_ptr = &timerid;
+    if (timer_create(CLOCKID, &sev, &timerid) == -1)
+	errExit("timer_create");
+    
+    /* Start the timer */
+
+    freq_nanosecs = time_ms*MILLI_TO_NANO;
+    its.it_value.tv_sec = freq_nanosecs / 1000000000;
+    its.it_value.tv_nsec = freq_nanosecs % 1000000000;
+    its.it_interval.tv_sec = its.it_value.tv_sec;
+    its.it_interval.tv_nsec = its.it_value.tv_nsec;
+
+    if (timer_settime(timerid, 0, &its, NULL) == -1)
+	errExit("timer_settime");
+
+}
+
+void register_callback(TimerInterrupt cb)
+{
+    timerCallback = cb;
+}
+
+/************************************************************************//**
+ * \brief
+ * \param
+ * \return
+ ****************************************************************************/
+
+/** \}*/
