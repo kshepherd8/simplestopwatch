@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <time.h>
-#include "SysTimer.h"
+#include "StopWatch.h"
 
 /****************************************************************************
  *                      PRIVATE TYPES and DEFINITIONS                       *
@@ -43,19 +43,22 @@
 /****************************************************************************
  *                     PRIVATE FUNCTION DECLARATIONS                        *
  ****************************************************************************/
-TimerInterrupt timerCB(void);
-
 //int MAIN(int argc, char *argv[])
 int MAIN(void)
 {
     printf("Stopwatch \n");
 
-    //timer_create();
     SystemTimerDevice * sysTimer = SystemTimer_Init();
-    sysTimer->RegisterInterruptCallback(timerCB);
-    sysTimer->SetTimer(1000);
+    StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
-    while(1);
+    printf("about to start stopwatch \n");
+    stopWatch->Start();
+    printf("stopwatch started \n");
+
+    while(1)
+    {
+	StopWatch_RenderTime();
+    }
 
     return 0;
 }
@@ -67,11 +70,6 @@ int MAIN(void)
 /****************************************************************************
  *                     PRIVATE FUNCTION DEFINITIONS                         *
  ****************************************************************************/
-TimerInterrupt timerCB(void)
-{
-    static char i = 0;
-    printf("tick %d \n", i++);
-}
 
 /************************************************************************//**
  * \brief
