@@ -52,7 +52,7 @@ int MAIN(void)
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
     printf("about to start stopwatch \n");
-    stopWatch->Start();
+    //stopWatch->Start();
     printf("stopwatch started \n");
 
     while(1)

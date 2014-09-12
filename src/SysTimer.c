@@ -69,8 +69,6 @@ SystemTimerDevice * SystemTimer_Init(void)
  ****************************************************************************/
 void set_timer(long long millisecs)
 {
-    printf("set_timer called \n");
-
     timer_t timerid;
     struct sigevent sev;
     struct itimerspec its;
@@ -130,12 +128,17 @@ void set_timer(long long millisecs)
 
 void register_callback(TimerInterrupt cb)
 {
+    printf("callback registered \n");
     timerCallback = cb;
 }
 
 void executeTimerCallback(int sig, siginfo_t *si, void *uc)
 {
-    timerCallback();
+    printf("execute timer callback called \n");
+    if(NULL != timerCallback)
+    {
+	timerCallback();
+    }
 }
 
 /************************************************************************//**
