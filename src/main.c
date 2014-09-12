@@ -55,6 +55,8 @@ int MAIN(void)
     sysTimer->RegisterInterruptCallback(timerCB);
     sysTimer->SetTimer(1000);
 
+    while(1);
+
     return 0;
 }
 
@@ -67,7 +69,8 @@ int MAIN(void)
  ****************************************************************************/
 TimerInterrupt timerCB(void)
 {
-    printf("tick \n");
+    static char i = 0;
+    printf("tick %d \n", i++);
 }
 
 /************************************************************************//**

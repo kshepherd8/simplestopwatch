@@ -28,7 +28,7 @@ typedef void (*TimerInterrupt)(void);
 
 typedef struct SystemTimerDevice
 {
-    void (*SetTimer)(double);
+    void (*SetTimer)(long long);
     void (*RegisterInterruptCallback)(TimerInterrupt);
 } SystemTimerDevice;
 
