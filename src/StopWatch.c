@@ -65,6 +65,9 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     //save a pointer to the source timer
     Timer = tim;
     
+    //register the timer interrupt
+    Timer->RegisterInterruptCallback(clockTick);
+
     //give Watch the correct handler functions
     Watch.Start = start_clock;
     Watch.Stop = stop_clock;
@@ -111,9 +114,6 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     TENHOUR_SEG.currentValue = 0;
     TENHOUR_SEG.nextSegment = NULL;
     TENHOUR_SEG.prevSegment = &HOUR_SEG;
-
-    //register the timer interrupt
-    Timer->RegisterInterruptCallback(clockTick);
 
     printf("stopwatch initialized \n");
 

@@ -57,7 +57,7 @@ int MAIN(void)
 
     while(1)
     {
-	StopWatch_RenderTime();
+	//StopWatch_RenderTime();
     }
 
     return 0;
