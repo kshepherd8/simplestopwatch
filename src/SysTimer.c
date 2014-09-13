@@ -78,7 +78,6 @@ void set_timer(long long millisecs)
 
     /* Establish handler for timer signal */
     
-    printf("Establishing handler for signal %d\n", SIG);
     sa.sa_flags = SA_SIGINFO;
     sa.sa_sigaction = executeTimerCallback; //give the signal handler our timer callback
     sigemptyset(&sa.sa_mask);
@@ -119,11 +118,7 @@ void set_timer(long long millisecs)
 
 void register_callback(TimerInterrupt cb)
 {
-    printf("callback registered \n");
     timerCallback = cb;
-    printf("calling callback \n");
-    //timerCallback();
-    printf("callback called \n");
 }
 
 void executeTimerCallback(int sig, siginfo_t *si, void *uc)

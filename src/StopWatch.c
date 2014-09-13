@@ -65,7 +65,6 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     //save a pointer to the source timer
     Timer = tim;
     
-    printf("Timer = %p \n", Timer);
 
     //register the timer interrupt
     Timer->RegisterInterruptCallback(clockTick);
@@ -117,8 +116,6 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     TENHOUR_SEG.nextSegment = NULL;
     TENHOUR_SEG.prevSegment = &HOUR_SEG;
 
-    printf("stopwatch initialized \n");
-
     return &Watch;
 }
 
@@ -138,10 +135,7 @@ void StopWatch_RenderTime(void)
  ****************************************************************************/
 void start_clock(void)
 {
-    printf("start_clock called \n");
-    printf("calling set_timer at mem loc %p \n", Timer->SetTimer);
     Timer->SetTimer(10);
-    StopWatch_RenderTime();
 }
 
 void stop_clock(void)

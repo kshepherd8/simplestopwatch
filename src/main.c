@@ -44,7 +44,7 @@
 /****************************************************************************
  *                     PRIVATE FUNCTION DECLARATIONS                        *
  ****************************************************************************/
-void testcb(void);
+void listOptions(void);
 
 //int MAIN(int argc, char *argv[])
 int MAIN(void)
@@ -52,23 +52,50 @@ int MAIN(void)
     SystemTimerDevice * sysTimer = SystemTimer_Init();
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
-    char input;
+    char input = 5;
 
-    stopWatch->Start();
+    //stopWatch->Start();
+    listOptions();
+
 
     while(1)
     {
-	while('\n' != getchar());
-	stopWatch->Stop();
-	StopWatch_RenderTime();
+	scanf("%d", &input);
+	switch(input)
+	{
+	    case 0:
+		return 0;
+	    case 1:
+		stopWatch->Start();
+		StopWatch_RenderTime();
+		break;
+	    case 2:
+		stopWatch->Stop();
+		StopWatch_RenderTime();
+		break;
+	    case 3:
+		stopWatch->Reset();
+		StopWatch_RenderTime();
+		break;
+	    case 4:
+		StopWatch_RenderTime();
+		break;
+	}
+	input = 5;
     }
 
     return 0;
 }
 
-void testcb(void)
+void listOptions(void)
 {
-    printf("testing \n");
+    printf("Stopwatch Options \n");
+    printf("0 -> quit \n");
+    printf("1 -> start \n");
+    printf("2 -> stop \n");
+    printf("3 -> reset \n");
+    printf("4 -> print time \n");
+    printf("\nOption -> ");
 }
 
 /****************************************************************************
