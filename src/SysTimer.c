@@ -71,7 +71,6 @@ SystemTimerDevice * SystemTimer_Init(void)
 void set_timer(long long millisecs)
 {
     printf("lets see if this gets called \n");
-    return;
     timer_t timerid;
     struct sigevent sev;
     struct itimerspec its;

@@ -44,20 +44,23 @@
 /****************************************************************************
  *                     PRIVATE FUNCTION DECLARATIONS                        *
  ****************************************************************************/
+void testcb(void);
+
 //int MAIN(int argc, char *argv[])
 int MAIN(void)
 {
-    printf("Stopwatch \n");
+    //printf("Stopwatch \n");
 
     SystemTimerDevice * sysTimer = SystemTimer_Init();
-    printf("sysTimer = %p \n", sysTimer);
-    StopWatch * stopWatch = StopWatch_Init(sysTimer);
+    //printf("sysTimer = %p \n", sysTimer);
+    //StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
     printf("about to start stopwatch \n");
     //stopWatch->Start();
+    sysTimer->RegisterInterruptCallback(testcb);
     sysTimer->SetTimer(10);
     printf("stopwatch started \n");
-    StopWatch_RenderTime();
+    //StopWatch_RenderTime();
 
     while(1)
     {
@@ -65,6 +68,11 @@ int MAIN(void)
     }
 
     return 0;
+}
+
+void testcb(void)
+{
+    printf("testing \n");
 }
 
 /****************************************************************************
