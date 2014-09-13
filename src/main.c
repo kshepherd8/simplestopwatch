@@ -64,7 +64,7 @@ int MAIN(void)
 	switch(input)
 	{
 	    case 0:
-		printf("Thanks for playin' brah! \n");
+		printf("Thanks for playin', brah! \n");
 		return 0;
 	    case 1:
 		stopWatch->Start();
