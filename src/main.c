@@ -64,21 +64,26 @@ int MAIN(void)
 	switch(input)
 	{
 	    case 0:
+		printf("Thanks for playin' brah! \n");
 		return 0;
 	    case 1:
 		stopWatch->Start();
 		StopWatch_RenderTime();
+		printf("\nOption -> ");
 		break;
 	    case 2:
 		stopWatch->Stop();
 		StopWatch_RenderTime();
+		printf("\nOption -> ");
 		break;
 	    case 3:
 		stopWatch->Reset();
 		StopWatch_RenderTime();
+		printf("\nOption -> ");
 		break;
 	    case 4:
 		StopWatch_RenderTime();
+		printf("\nOption -> ");
 		break;
 	}
 	input = 5;
