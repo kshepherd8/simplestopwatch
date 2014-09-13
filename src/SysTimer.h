@@ -24,6 +24,7 @@
 /****************************************************************************
  *                     EXPORTED TYPES and DEFINITIONS                       *
  ****************************************************************************/
+void set_timer(long long millisecs);
 typedef void (*TimerInterrupt)(void);
 
 typedef struct SystemTimerDevice

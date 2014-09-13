@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <time.h>
 #include "StopWatch.h"
+#include "SysTimer.h"
 
 /****************************************************************************
  *                      PRIVATE TYPES and DEFINITIONS                       *
@@ -49,11 +50,14 @@ int MAIN(void)
     printf("Stopwatch \n");
 
     SystemTimerDevice * sysTimer = SystemTimer_Init();
+    printf("sysTimer = %p \n", sysTimer);
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
     printf("about to start stopwatch \n");
     //stopWatch->Start();
+    sysTimer->SetTimer(10);
     printf("stopwatch started \n");
+    StopWatch_RenderTime();
 
     while(1)
     {

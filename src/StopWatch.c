@@ -65,6 +65,8 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     //save a pointer to the source timer
     Timer = tim;
     
+    printf("Timer = %p \n", Timer);
+
     //register the timer interrupt
     Timer->RegisterInterruptCallback(clockTick);
 
@@ -137,7 +139,8 @@ void StopWatch_RenderTime(void)
 void start_clock(void)
 {
     printf("start_clock called \n");
-    Timer->SetTimer(10);
+    printf("calling set_timer at mem loc %p \n", Timer->SetTimer);
+    //Timer->SetTimer(10);
     StopWatch_RenderTime();
 }
 
@@ -171,14 +174,22 @@ StopWatchTime current_time(void)
 void incrementSegment(ClockSegment * seg)
 {
     printf("incrementsegmentcalled \n");
-    /*seg->currentValue++;
-    seg->currentValue %= seg->rollover;
+    printf("current value = %d \n", seg->currentValue);
+    seg->currentValue = 1;
+    printf("current value = %d \n", seg->currentValue);
+    printf("can we handle mods? \n");
+    if(seg->currentValue == seg->rollover)
+    {
+	seg->currentValue = 0;
+    }
+
+    printf("segment incremented \n");
 
     ClockSegment * hourseg;
 
     if(0 == seg->currentValue && seg->nextSegment != NULL)
     {
-	incrementSegment(seg->nextSegment);
+	incrementSegment((ClockSegment *)(seg->nextSegment));
     }
 
     if(seg == &TENHOUR_SEG && seg->prevSegment != NULL)
@@ -194,7 +205,7 @@ void incrementSegment(ClockSegment * seg)
 		break;
 	}
     }
-    */
+    
 }
 
 TimerInterrupt clockTick(void)

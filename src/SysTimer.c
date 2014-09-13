@@ -50,7 +50,7 @@ TimerInterrupt timerCallback = NULL;
 /****************************************************************************
  *                     PRIVATE FUNCTION DECLARATIONS                        *
  ****************************************************************************/
-void set_timer(long long millisecs);
+//void set_timer(long long millisecs);
 void register_callback(TimerInterrupt cb);
 void executeTimerCallback(int sig, siginfo_t *si, void *uc);
 
@@ -61,6 +61,7 @@ SystemTimerDevice * SystemTimer_Init(void)
 {
     Timer.SetTimer = set_timer;
     Timer.RegisterInterruptCallback = register_callback;
+    printf("set_timer is at mem loc %p \n", Timer.SetTimer);
     return &Timer;
 }
 
@@ -69,6 +70,8 @@ SystemTimerDevice * SystemTimer_Init(void)
  ****************************************************************************/
 void set_timer(long long millisecs)
 {
+    printf("lets see if this gets called \n");
+    return;
     timer_t timerid;
     struct sigevent sev;
     struct itimerspec its;
@@ -120,7 +123,7 @@ void set_timer(long long millisecs)
 	errExit("timer_settime");
 
     printf("Sleeping for %d seconds\n", 1);
-    //sleep(1);
+    //sleep(10);
 
     if (sigprocmask(SIG_UNBLOCK, &mask, NULL) == -1)
 	errExit("sigprocmask");
@@ -130,6 +133,9 @@ void register_callback(TimerInterrupt cb)
 {
     printf("callback registered \n");
     timerCallback = cb;
+    printf("calling callback \n");
+    timerCallback();
+    printf("callback called \n");
 }
 
 void executeTimerCallback(int sig, siginfo_t *si, void *uc)
