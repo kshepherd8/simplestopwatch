@@ -140,7 +140,7 @@ void start_clock(void)
 {
     printf("start_clock called \n");
     printf("calling set_timer at mem loc %p \n", Timer->SetTimer);
-    //Timer->SetTimer(10);
+    Timer->SetTimer(10);
     StopWatch_RenderTime();
 }
 
@@ -173,38 +173,26 @@ StopWatchTime current_time(void)
 
 void incrementSegment(ClockSegment * seg)
 {
-    printf("incrementsegmentcalled \n");
-    printf("current value = %d \n", seg->currentValue);
-    seg->currentValue = 1;
-    printf("current value = %d \n", seg->currentValue);
-    printf("can we handle mods? \n");
+    seg->currentValue = seg->currentValue + 1;
     if(seg->currentValue == seg->rollover)
     {
 	seg->currentValue = 0;
     }
-
-    printf("segment incremented \n");
-
-    ClockSegment * hourseg;
 
     if(0 == seg->currentValue && seg->nextSegment != NULL)
     {
 	incrementSegment((ClockSegment *)(seg->nextSegment));
     }
 
-    if(seg == &TENHOUR_SEG && seg->prevSegment != NULL)
-    {
-	hourseg = (ClockSegment *)(seg->prevSegment);
-	switch(seg->currentValue)
+	switch(TENHOUR_SEG.currentValue)
 	{
 	    case 0:
-		hourseg->rollover = 10;
+		HOUR_SEG.rollover = 10;
 		break;
 	    case 1:
-		hourseg->rollover = 2;
+		HOUR_SEG.rollover = 2;
 		break;
 	}
-    }
     
 }
 

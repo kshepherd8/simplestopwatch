@@ -49,22 +49,18 @@ void testcb(void);
 //int MAIN(int argc, char *argv[])
 int MAIN(void)
 {
-    //printf("Stopwatch \n");
-
     SystemTimerDevice * sysTimer = SystemTimer_Init();
-    //printf("sysTimer = %p \n", sysTimer);
-    //StopWatch * stopWatch = StopWatch_Init(sysTimer);
+    StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
-    printf("about to start stopwatch \n");
-    //stopWatch->Start();
-    sysTimer->RegisterInterruptCallback(testcb);
-    sysTimer->SetTimer(10);
-    printf("stopwatch started \n");
-    //StopWatch_RenderTime();
+    char input;
+
+    stopWatch->Start();
 
     while(1)
     {
-	//StopWatch_RenderTime();
+	while('\n' != getchar());
+	stopWatch->Stop();
+	StopWatch_RenderTime();
     }
 
     return 0;

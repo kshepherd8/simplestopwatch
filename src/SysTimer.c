@@ -40,7 +40,7 @@
 /****************************************************************************
  *                              PRIVATE DATA                                *
  ****************************************************************************/
-SystemTimerDevice Timer;
+static SystemTimerDevice Timer;
 TimerInterrupt timerCallback = NULL;
 
 /****************************************************************************
@@ -61,7 +61,6 @@ SystemTimerDevice * SystemTimer_Init(void)
 {
     Timer.SetTimer = set_timer;
     Timer.RegisterInterruptCallback = register_callback;
-    printf("set_timer is at mem loc %p \n", Timer.SetTimer);
     return &Timer;
 }
 
@@ -70,7 +69,6 @@ SystemTimerDevice * SystemTimer_Init(void)
  ****************************************************************************/
 void set_timer(long long millisecs)
 {
-    printf("lets see if this gets called \n");
     timer_t timerid;
     struct sigevent sev;
     struct itimerspec its;
@@ -89,7 +87,6 @@ void set_timer(long long millisecs)
     
     /* Block timer signal temporarily */
 
-    printf("Blocking signal %d\n", SIG);
     sigemptyset(&mask);
     sigaddset(&mask, SIG);
     if (sigprocmask(SIG_SETMASK, &mask, NULL) == -1)
@@ -102,15 +99,10 @@ void set_timer(long long millisecs)
     sev.sigev_value.sival_ptr = &timerid;
     if (timer_create(CLOCKID, &sev, &timerid) == -1)
 	errExit("timer_create");
-
-    printf("timer ID is 0x%ln\n", (long) timerid);
     
     /* Start the timer */
 
     freq_nanosecs = millisecs*(long long)MILLI_TO_NANO;
-    printf("millisecs = %ld \n", millisecs);
-    printf("MILLI_TO_NANO = %ld \n", MILLI_TO_NANO);
-    printf("freq_nanosecs = %ld \n", freq_nanosecs);
     its.it_value.tv_sec = freq_nanosecs / 1000000000;
     //its.it_value.tv_sec = 1;
     its.it_value.tv_nsec = freq_nanosecs % 1000000000;
@@ -121,9 +113,6 @@ void set_timer(long long millisecs)
     if (timer_settime(timerid, 0, &its, NULL) == -1)
 	errExit("timer_settime");
 
-    printf("Sleeping for %d seconds\n", 1);
-    //sleep(10);
-
     if (sigprocmask(SIG_UNBLOCK, &mask, NULL) == -1)
 	errExit("sigprocmask");
 }
@@ -133,13 +122,12 @@ void register_callback(TimerInterrupt cb)
     printf("callback registered \n");
     timerCallback = cb;
     printf("calling callback \n");
-    timerCallback();
+    //timerCallback();
     printf("callback called \n");
 }
 
 void executeTimerCallback(int sig, siginfo_t *si, void *uc)
 {
-    printf("execute timer callback called \n");
     if(NULL != timerCallback)
     {
 	timerCallback();
