@@ -48,6 +48,7 @@ typedef struct StopWatchTime
 
 typedef struct StopWatch
 {
+    StopwatchState state;
     void (*Start)(void);
     void (*Stop)(void);
     void (*Reset)(void);

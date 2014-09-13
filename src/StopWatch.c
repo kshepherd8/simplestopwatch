@@ -39,8 +39,8 @@ ClockSegment TENHOUR_SEG;
 /****************************************************************************
  *                              PRIVATE DATA                                *
  ****************************************************************************/
-StopWatch Watch;
-SystemTimerDevice * Timer;
+static StopWatch Watch;
+static SystemTimerDevice * Timer;
 
 /****************************************************************************
  *                             EXTERNAL DATA                                *
@@ -74,6 +74,8 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     Watch.Stop = stop_clock;
     Watch.Reset = reset_clock;
     Watch.GetTime = current_time;
+
+    Watch.state = STOPWATCH_IDLE;
 
     //build the clock segments
     HUNDREDTH_SEG.rollover = 10;
@@ -121,8 +123,6 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
 
 void StopWatch_RenderTime(void)
 {
-    StopWatchTime time = Watch.GetTime();
-
     printf("%d%d:%d%d:%d%d.%d%d \n", TENHOUR_SEG.currentValue,
 	    HOUR_SEG.currentValue, TENMINUTE_SEG.currentValue,
 	    MINUTE_SEG.currentValue, TENSEC_SEG.currentValue,
@@ -135,12 +135,14 @@ void StopWatch_RenderTime(void)
  ****************************************************************************/
 void start_clock(void)
 {
-    Timer->SetTimer(10);
+    Watch.state = STOPWATCH_RUNNING;
+    Timer->SetTimer(TEN_MS);
 }
 
 void stop_clock(void)
 {
-    Timer->SetTimer(STOP_TIMER);
+    Watch.state = STOPWATCH_IDLE;
+    Timer->SetTimer(0);
 }
 
 void reset_clock(void)
@@ -158,6 +160,7 @@ void reset_clock(void)
     
 }
 
+//not actually used
 StopWatchTime current_time(void)
 {
     StopWatchTime time;
@@ -192,7 +195,10 @@ void incrementSegment(ClockSegment * seg)
 
 TimerInterrupt clockTick(void)
 {
-    incrementSegment(&HUNDREDTH_SEG);
+    if(Watch.state == STOPWATCH_RUNNING)
+    {
+	incrementSegment(&HUNDREDTH_SEG);
+    }
 }
 
 /************************************************************************//**
