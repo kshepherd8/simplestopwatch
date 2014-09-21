@@ -29,7 +29,8 @@
  ****************************************************************************/
 typedef enum
 {
-    STOPWATCH_UNITIALIZED,
+    STOPWATCH_UNINITIALIZED = 0,
+    STOPWATCH_NOT_STARTED,
     STOPWATCH_IDLE,
     STOPWATCH_RUNNING    
 } StopwatchState;

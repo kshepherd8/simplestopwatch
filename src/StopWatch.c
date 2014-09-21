@@ -63,9 +63,12 @@ TimerInterrupt clockTick(void);
  ****************************************************************************/
 StopWatch * StopWatch_Init(SystemTimerDevice * tim)
 {
+    //create a new screen 
+    initscr();
+    refresh();
+
     //save a pointer to the source timer
     Timer = tim;
-    
 
     //register the timer interrupt
     Timer->RegisterInterruptCallback(clockTick);
@@ -76,7 +79,7 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     Watch.Reset = reset_clock;
     Watch.GetTime = current_time;
 
-    Watch.state = STOPWATCH_IDLE;
+    Watch.state = STOPWATCH_NOT_STARTED;
 
     //build the clock segments
     HUNDREDTH_SEG.rollover = 10;
@@ -119,16 +122,27 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     TENHOUR_SEG.nextSegment = NULL;
     TENHOUR_SEG.prevSegment = &HOUR_SEG;
 
+    StopWatch_RenderTime();
+
     return &Watch;
 }
 
 void StopWatch_RenderTime(void)
 {
-    printf("%d%d:%d%d:%d%d.%d%d \n", TENHOUR_SEG.currentValue,
+    clear();
+    printw("%d%d:%d%d:%d%d.%d%d \n", TENHOUR_SEG.currentValue,
 	    HOUR_SEG.currentValue, TENMINUTE_SEG.currentValue,
 	    MINUTE_SEG.currentValue, TENSEC_SEG.currentValue,
 	    SEC_SEG.currentValue, TENTH_SEG.currentValue,
 	    HUNDREDTH_SEG.currentValue);
+    printw("\nStopwatch Options \n");
+    printw("0 -> quit \n");
+    printw("1 -> start \n");
+    printw("2 -> stop \n");
+    printw("3 -> reset \n");
+    printw("4 -> print time \n");
+    printw("\nOption -> ");
+    refresh();
 }
 
 /****************************************************************************
@@ -136,8 +150,11 @@ void StopWatch_RenderTime(void)
  ****************************************************************************/
 void start_clock(void)
 {
+    if(STOPWATCH_NOT_STARTED == Watch.state)
+    {
+	Timer->SetTimer(TEN_MS);
+    }
     Watch.state = STOPWATCH_RUNNING;
-    Timer->SetTimer(TEN_MS);
 }
 
 void stop_clock(void)
@@ -158,6 +175,8 @@ void reset_clock(void)
     TENMINUTE_SEG.currentValue = 0;
     HOUR_SEG.currentValue = 0;
     TENHOUR_SEG.currentValue = 0;
+
+    StopWatch_RenderTime();
     
 }
 
@@ -199,6 +218,7 @@ TimerInterrupt clockTick(void)
     if(Watch.state == STOPWATCH_RUNNING)
     {
 	incrementSegment(&HUNDREDTH_SEG);
+	StopWatch_RenderTime();
     }
 }
 

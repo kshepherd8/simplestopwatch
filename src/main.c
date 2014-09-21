@@ -68,6 +68,10 @@ int MAIN(void)
 	{
 	    case 0:
 		printf("Thanks for playin', brah! \n");
+		clear();
+		refresh();
+		sleep(3);
+		endwin();
 		return 0;
 	    case 1:
 		stopWatch->Start();
@@ -92,6 +96,10 @@ int MAIN(void)
 	input = 5;
     }
 
+    curs_set(1);
+    clear();
+    refresh();
+    sleep(3);
     endwin();
     return 0;
 }
