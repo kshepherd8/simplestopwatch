@@ -6,7 +6,7 @@ BINDIR=bin
 default: StopWatch
 
 StopWatch: $(SOURCES)
-	gcc $(SOURCES) -lrt -lncurses -Wall -o $(BINDIR)/StopWatch
+	clang $(SOURCES) -lrt -lncurses -Wall -o $(BINDIR)/StopWatch
 
 clean:
 	rm bin/*
