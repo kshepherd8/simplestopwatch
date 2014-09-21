@@ -53,7 +53,7 @@ int MAIN(void)
     SystemTimerDevice * sysTimer = SystemTimer_Init();
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
 
-    char input = 5;
+    int input = 5;
 
     //stopWatch->Start();
     initscr();
