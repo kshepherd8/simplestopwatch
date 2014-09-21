@@ -98,6 +98,7 @@ int MAIN(void)
 
 void makeDisplay(void)
 {
+    //this should be moved.
     printw("Stopwatch Options \n");
     printw("0 -> quit \n");
     printw("1 -> start \n");
