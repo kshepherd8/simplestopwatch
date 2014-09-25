@@ -41,6 +41,7 @@ ClockSegment TENHOUR_SEG;
  *                              PRIVATE DATA                                *
  ****************************************************************************/
 static StopWatch Watch;
+static StopWatchState WatchState;
 static SystemTimerDevice * Timer;
 
 /****************************************************************************
@@ -63,10 +64,6 @@ TimerInterrupt clockTick(void);
  ****************************************************************************/
 StopWatch * StopWatch_Init(SystemTimerDevice * tim)
 {
-    //create a new screen 
-    initscr();
-    refresh();
-
     //save a pointer to the source timer
     Timer = tim;
 
@@ -79,7 +76,7 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     Watch.Reset = reset_clock;
     Watch.GetTime = current_time;
 
-    Watch.state = STOPWATCH_NOT_STARTED;
+    WatchState = STOPWATCH_NOT_STARTED;
 
     //build the clock segments
     HUNDREDTH_SEG.rollover = 10;
@@ -127,63 +124,54 @@ StopWatch * StopWatch_Init(SystemTimerDevice * tim)
     return &Watch;
 }
 
-void StopWatch_RenderTime(void)
-{
-    clear();
-    printw("%d%d:%d%d:%d%d.%d%d \n", TENHOUR_SEG.currentValue,
-	    HOUR_SEG.currentValue, TENMINUTE_SEG.currentValue,
-	    MINUTE_SEG.currentValue, TENSEC_SEG.currentValue,
-	    SEC_SEG.currentValue, TENTH_SEG.currentValue,
-	    HUNDREDTH_SEG.currentValue);
-    printw("\nStopwatch Options \n");
-    printw("0 -> quit \n");
-    printw("1 -> start \n");
-    printw("2 -> stop \n");
-    printw("3 -> reset \n");
-    printw("4 -> print time \n");
-    printw("\nOption -> ");
-    refresh();
-}
-
 /****************************************************************************
  *                     PRIVATE FUNCTION DEFINITIONS                         *
  ****************************************************************************/
 void start_clock(void)
 {
-    if(STOPWATCH_NOT_STARTED == Watch.state)
-    {
-	Timer->SetTimer(TEN_MS);
-    }
-    Watch.state = STOPWATCH_RUNNING;
+    Timer->SetTimer(TEN_MS);
+    WatchState = STOPWATCH_RUNNING;
 }
 
 void stop_clock(void)
 {
-    Watch.state = STOPWATCH_IDLE;
     Timer->SetTimer(0);
+    WatchState = STOPWATCH_IDLE;
 }
 
 void reset_clock(void)
 {
-    HOUR_SEG.rollover = 10;
+    switch(WatchState)
+    {
+	case(STOPWATCH_IDLE):
+	    {
+		HOUR_SEG.rollover = 10;
 
-    HUNDREDTH_SEG.currentValue = 0;
-    TENTH_SEG.currentValue = 0;
-    SEC_SEG.currentValue = 0;
-    TENSEC_SEG.currentValue = 0;
-    MINUTE_SEG.currentValue = 0;
-    TENMINUTE_SEG.currentValue = 0;
-    HOUR_SEG.currentValue = 0;
-    TENHOUR_SEG.currentValue = 0;
-
-    StopWatch_RenderTime();
-    
+		HUNDREDTH_SEG.currentValue = 0;
+		TENTH_SEG.currentValue = 0;
+		SEC_SEG.currentValue = 0;
+		TENSEC_SEG.currentValue = 0;
+		MINUTE_SEG.currentValue = 0;
+		TENMINUTE_SEG.currentValue = 0;
+		HOUR_SEG.currentValue = 0;
+		TENHOUR_SEG.currentValue = 0;
+		break;
+	    }
+    }
 }
 
-//not actually used
 StopWatchTime current_time(void)
 {
     StopWatchTime time;
+
+    time.hundredth = HUNDREDTH_SEG.currentValue;
+    time.tenth = TENTH_SEG.currentValue;
+    time.sec_low = SEC_SEG.currentValue;
+    time.sec_high = TENSEC_SEG.currentValue;
+    time.min_low = MINUTE_SEG.currentValue;
+    time.min_high = TENMINUTE_SEG.currentValue;
+    time.hour_low = HOUR_SEG.currentValue;
+    time.hour_high = TENHOUR_SEG.currentValue;
 
     return time;
 }

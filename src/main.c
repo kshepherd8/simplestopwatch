@@ -19,19 +19,14 @@
  ****************************************************************************/
 #include "main.h"
 #include "CommonDefines.h"
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <signal.h>
-#include <time.h>
-#include <ncurses.h>
 #include "StopWatch.h"
 #include "SysTimer.h"
+#include "LCDRenderer.h"
 
 /****************************************************************************
  *                      PRIVATE TYPES and DEFINITIONS                       *
  ****************************************************************************/
-
+#define TIMEARRAYLENGTH 8
 //error message
 
 /****************************************************************************
@@ -45,85 +40,47 @@
 /****************************************************************************
  *                     PRIVATE FUNCTION DECLARATIONS                        *
  ****************************************************************************/
-void makeDisplay(void);
+bool timeEqual(StopWatchTime * time1, StopWatchTime * time2);
 
+/****************************************************************************
+ *                     EXPORTED FUNCTION DEFINITIONS                        *
+ ****************************************************************************/
 //int MAIN(int argc, char *argv[])
 int MAIN(void)
 {
     SystemTimerDevice * sysTimer = SystemTimer_Init();
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
+    LCDRenderer * lcd = LCDRenderer_Init();
+    StopWatchTime lcdTime;
+    StopWatchTime currentTime;
 
     int input = 5;
 
-    //stopWatch->Start();
-    initscr();
-    refresh();
-    //makeDisplay();
-
-
     while(1)
     {
-	scanf("%d", &input);
-	switch(input)
+	//TODO: keyboard input logic
+	currentTime = StopWatch.GetTime();
+	if(!timeEqual(&lcdTime, &currentTime))
 	{
-	    case 0:
-		printf("Thanks for playin', brah! \n");
-		clear();
-		refresh();
-		sleep(3);
-		endwin();
-		return 0;
-	    case 1:
-		stopWatch->Start();
-		//StopWatch_RenderTime();
-		//printf("\nOption -> ");
-		break;
-	    case 2:
-		stopWatch->Stop();
-		//StopWatch_RenderTime();
-		//printf("\nOption -> ");
-		break;
-	    case 3:
-		stopWatch->Reset();
-		//StopWatch_RenderTime();
-		//printf("\nOption -> ");
-		break;
-	    case 4:
-		StopWatch_RenderTime();
-		//printf("\nOption -> ");
-		break;
+	    lcdTime = currentTime;
+	    lcd->RenderTime(lcdTime);
 	}
-	input = 5;
     }
 
-    curs_set(1);
-    clear();
-    refresh();
-    sleep(3);
-    endwin();
     return 0;
 }
-
-void makeDisplay(void)
-{
-    //this should be moved.
-    printw("Stopwatch Options \n");
-    printw("0 -> quit \n");
-    printw("1 -> start \n");
-    printw("2 -> stop \n");
-    printw("3 -> reset \n");
-    printw("4 -> print time \n");
-    printw("\nOption -> ");
-    refresh();
-}
-
-/****************************************************************************
- *                     EXPORTED FUNCTION DEFINITIONS                        *
- ****************************************************************************/
 
 /****************************************************************************
  *                     PRIVATE FUNCTION DEFINITIONS                         *
  ****************************************************************************/
+bool timeEqual(StopWatchTime * time1, StopWatchTime * time2)
+{
+   int * time1array = (int *)time1;
+   int * time2array = (int *)time2;
+    
+   return (memcmp(time1array, time2array, sizeof(int)*TIME_ARRAY_LEN) ? 1 : 0);
+
+}
 
 /************************************************************************//**
  * \brief

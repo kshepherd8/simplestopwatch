@@ -49,7 +49,6 @@ typedef struct StopWatchTime
 
 typedef struct StopWatch
 {
-    StopwatchState state;
     void (*Start)(void);
     void (*Stop)(void);
     void (*Reset)(void);
@@ -64,7 +63,6 @@ typedef struct StopWatch
  *                     EXPORTED FUNCTION DECLARATIONS                       *
  ****************************************************************************/
 StopWatch * StopWatch_Init(SystemTimerDevice * tim);
-void StopWatch_RenderTime(void);
 
 #endif /* _STOPWATCH_H */
 
