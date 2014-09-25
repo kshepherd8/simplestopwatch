@@ -22,6 +22,7 @@
 #include "StopWatch.h"
 #include "SysTimer.h"
 #include "LCDRenderer.h"
+#include "TextLCD.h"
 
 /****************************************************************************
  *                      PRIVATE TYPES and DEFINITIONS                       *
@@ -50,21 +51,26 @@ int MAIN(void)
 {
     SystemTimerDevice * sysTimer = SystemTimer_Init();
     StopWatch * stopWatch = StopWatch_Init(sysTimer);
-    LCDRenderer * lcd = LCDRenderer_Init();
+    TextLCD lcd(p15, p16, p17, p18, p19, p20);
+    LCDRenderer * renderer = LCDRenderer_Init(&lcd);
     StopWatchTime lcdTime;
     StopWatchTime currentTime;
 
     int input = 5;
 
+    renderer.RenderText((void *)&input);
+
     while(1)
     {
 	//TODO: keyboard input logic
+	/*
 	currentTime = StopWatch.GetTime();
 	if(!timeEqual(&lcdTime, &currentTime))
 	{
 	    lcdTime = currentTime;
 	    lcd->RenderTime(lcdTime);
 	}
+	*/
     }
 
     return 0;
